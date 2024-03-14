@@ -1,7 +1,5 @@
 
-use std::path::Iter;
-
-use rand::{rngs::StdRng, thread_rng, Rng, SeedableRng};
+use rand::{thread_rng, Rng};
 use rayon::prelude::*;
 
 pub trait Round {
@@ -69,23 +67,22 @@ impl Round for f64 {
 }
 
 fn main() {
-    let mut rng = thread_rng();
-    let binding = vec![rng.gen::<f64>(); 10000000000];
-    let random_sequences: &[&[f64]] = &vec![binding.as_slice(); 8];
+    let cummulative_diff = (0..8).into_par_iter().map(|_| {
+        let mut sum = 0.0;
+        let mut rng = thread_rng();
 
-    println!("Generated random numbers.");
-
-    let cum = random_sequences.par_iter().map(|sequence| {
-        sequence.iter().map(|float| {
-            let rounded = float.floor();
+        for _ in 0..(i32::MAX >> 1)  {
+            let float: f64 = rng.gen();
+            let rounded = float.ties_to_even();
 
             let diff = rounded - float;
+            sum += diff;
+        }
 
-            diff
-        }).sum::<f64>()
+        sum
     }).sum::<f64>();
 
-    println!("Average difference: {}", cum);
+    println!("Average difference: {}", cummulative_diff);
 }
 
 #[cfg(test)]
