@@ -66,12 +66,15 @@ impl Round for f64 {
     }
 }
 
+const OPERATIONS: u32 = u32::MAX;
+const THREADS: u32 = 8;
+
 fn main() {
-    let cummulative_diff = (0..8).into_par_iter().map(|_| {
+    let cummulative_diff = (0..THREADS).into_par_iter().map(|_| {
         let mut sum = 0.0;
         let mut rng = thread_rng();
 
-        for _ in 0..(i32::MAX >> 1)  {
+        for _ in 0..(OPERATIONS / THREADS)  {
             let float: f64 = rng.gen();
             let rounded = float.ties_to_even();
 
