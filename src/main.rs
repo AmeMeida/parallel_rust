@@ -66,8 +66,8 @@ impl Round for f64 {
     }
 }
 
-const OPERATIONS: u32 = u32::MAX;
-const THREADS: u32 = 8;
+const OPERATIONS: u64 = u32::MAX as u64;
+const THREADS: u64 = 8;
 
 fn main() {
     let cummulative_diff = (0..THREADS).into_par_iter().map(|_| {
@@ -76,7 +76,7 @@ fn main() {
 
         for _ in 0..(OPERATIONS / THREADS)  {
             let float: f64 = rng.gen();
-            let rounded = float.ties_to_even();
+            let rounded = float.round();
 
             let diff = rounded - float;
             sum += diff;
